@@ -78,8 +78,8 @@ textarea{min-height:84px;resize:vertical}
       <div class="q">Qual é o principal objetivo agora?</div>
       <div class="opts" data-g="objetivo" data-mode="one">
         <button type="button" class="chip" data-v="Reforço escolar e acompanhamento contínuo">📈 Reforço escolar e acompanhamento contínuo</button>
-        <button type="button" class="chip" data-v="Preparação para prova específica / recuperação">📝 Preparação para uma prova específica / recuperação</button>
-        <button type="button" class="chip" data-v="Aprender do zero / desenvolver nova habilidade">🌱 Aprender do zero / desenvolver uma nova habilidade</button>
+        <button type="button" class="chip" data-v="Preparação para uma prova específica / recuperação">📝 Preparação para uma prova específica / recuperação</button>
+        <button type="button" class="chip" data-v="Aprender do zero / desenvolver uma nova habilidade">🌱 Aprender do zero / desenvolver uma nova habilidade</button>
       </div>
       <label for="dif">Qual é a maior dificuldade hoje? <em>(opcional)</em></label>
       <textarea id="dif" placeholder="Conta rapidinho…"></textarea>
@@ -89,8 +89,8 @@ textarea{min-height:84px;resize:vertical}
       <h2>Sua disponibilidade 🗓️</h2>
       <div class="q">Online ou presencial?</div>
       <div class="opts" data-g="modo" data-mode="one">
-        <button type="button" class="chip" data-v="100% online (ao vivo)">💻 100% online (ao vivo)</button>
-        <button type="button" class="chip" data-v="Presencial em Belo Horizonte">🏠 Presencial em Belo Horizonte</button>
+        <button type="button" class="chip" data-v="100% Online (ao vivo)">💻 100% online (ao vivo)</button>
+        <button type="button" class="chip" data-v="Presencial (em Belo Horizonte — informe seu endereço abaixo, se quiser)">🏠 Presencial em Belo Horizonte</button>
       </div>
       <div id="endBox" class="hide">
         <label for="end">Endereço <em>(opcional)</em></label>
@@ -106,11 +106,11 @@ textarea{min-height:84px;resize:vertical}
     <section class="step" data-s="4">
       <div class="done">
         <div class="big">🎉</div>
-        <h2>Tudo certo por aqui!</h2>
-        <p style="color:var(--mut);margin:0">Confira o resumo e toque no botão. Suas respostas chegam direto no meu WhatsApp e eu já te respondo para alinharmos os horários.</p>
+        <h2>Inscrição enviada!</h2>
+        <p style="color:var(--mut);margin:0">Sua inscrição foi enviada! Toque no botão abaixo para me avisar no WhatsApp e já alinharmos os horários.</p>
       </div>
       <div class="sum" id="sum"></div>
-      <a class="btn wa" id="wa" href="#" target="_blank" rel="noopener">Enviar pelo WhatsApp</a>
+      <a class="btn wa" id="wa" href="#" target="_blank" rel="noopener">Avisar no WhatsApp</a>
     </section>
 
     <div class="err" id="err"></div>
@@ -125,10 +125,10 @@ textarea{min-height:84px;resize:vertical}
 var NUM="5531988122947";
 var D={serie:"",objetivo:"",modo:"",horarios:[],dias:[]};
 var step=1,titles=["Seus dados","Sobre você","Disponibilidade","Confirmar"];
-function mk(g,list){var c=document.querySelector('[data-g="'+g+'"]');list.forEach(function(v){var b=document.createElement("button");b.type="button";b.className="chip";b.dataset.v=v;b.textContent=v;c.appendChild(b)})}
+function mk(g,list){var c=document.querySelector('[data-g="'+g+'"]');list.forEach(function(v){var b=document.createElement("button");b.type="button";b.className="chip";b.dataset.v=v;b.textContent=v.replace("- ","-");c.appendChild(b)})}
 mk("serie",["3º ano","4º ano","5º ano","6º ano","7º ano","8º ano","9º ano","1º ano EM","2º ano EM","3º ano EM"]);
 mk("horarios",["13:00","14:00","15:00","16:00","17:00","18:00"]);
-mk("dias",["Segunda","Terça","Quarta","Quinta","Sexta","Sábado"]);
+mk("dias",["Segunda-feira","Terça-feira","Quarta-feira","Quinta- feira","Sexta- feira","Sábado"]);
 document.addEventListener("click",function(e){
   var b=e.target.closest(".chip");if(!b)return;
   var g=b.parentElement.dataset.g,m=b.parentElement.dataset.mode,v=b.dataset.v;
@@ -146,13 +146,31 @@ function val(){
 function msg(){
   var g=function(id){return document.getElementById(id).value.trim()};
   var h=D.horarios.slice();if(g("outroH"))h.push(g("outroH"));
-  var L=[["Nome",g("nome")],["WhatsApp",g("whats")],["Série",D.serie],["Objetivo",D.objetivo],["Maior dificuldade",g("dif")],["Modalidade",D.modo],["Endereço",g("end")],["Horários",h.join(", ")],["Dias",D.dias.join(", ")]].filter(function(x){return x[1]});
+  var L=[["Nome",g("nome")],["WhatsApp",g("whats")],["Série",D.serie],["Objetivo",D.objetivo],["Maior dificuldade",g("dif")],["Modalidade",D.modo.indexOf("Presencial")===0?"Presencial em Belo Horizonte":"100% online (ao vivo)"],["Endereço",g("end")],["Horários",h.join(", ")],["Dias",D.dias.join(", ").replace(/- /g,"-")]].filter(function(x){return x[1]});
   return L}
+var FORM="https://docs.google.com/forms/d/e/1FAIpQLSdNmlFc_mkUfcV36qxgtZJhuosqBivMRC6F5r6IKe60PFnRhw/formResponse",sent=false;
+function send(){
+  if(sent)return;sent=true;
+  var g=function(id){return document.getElementById(id).value.trim()},p=new URLSearchParams();
+  p.append("entry.391122785",g("nome"));
+  p.append("entry.1241075436",g("whats"));
+  p.append("entry.163877840",D.serie);
+  p.append("entry.1934159710",D.objetivo);
+  p.append("entry.1792381291",g("dif"));
+  p.append("entry.1034199029",D.modo);
+  p.append("entry.705086483",g("end"));
+  D.horarios.forEach(function(h){p.append("entry.1781200940",h)});
+  if(g("outroH")){p.append("entry.1781200940","__other_option__");p.append("entry.1781200940.other_option_response",g("outroH"))}
+  D.dias.forEach(function(d){p.append("entry.40544185",d)});
+  p.append("pageHistory","0,1,2");
+  try{fetch(FORM,{method:"POST",mode:"no-cors",body:p})}catch(e){}
+}
 function show(){
   document.querySelectorAll(".step").forEach(function(s){s.classList.toggle("on",+s.dataset.s===step)});
   document.querySelectorAll("#bar i").forEach(function(i,k){i.classList.toggle("on",k<Math.min(step,3))});
   document.getElementById("sl").textContent=step<4?"Etapa "+step+" de 3 · "+titles[step-1]:"Última etapa 🎉";
-  document.getElementById("back").style.visibility=step>1?"visible":"hidden";
+  document.getElementById("back").style.visibility=step>1&&step<4?"visible":"hidden";
+  document.getElementById("next").textContent=step===3?"Enviar inscrição ✓":"Continuar →";
   document.getElementById("next").style.display=step===4?"none":"block";
   document.getElementById("err").textContent="";
   if(step===4){var L=msg();
@@ -160,7 +178,7 @@ function show(){
     var t="Oi! Acabei de preencher a inscrição para aulas particulares de Matemática 📐\n\n"+L.map(function(x){return"*"+x[0]+":* "+x[1]}).join("\n");
     document.getElementById("wa").href="https://wa.me/"+NUM+"?text="+encodeURIComponent(t)}
   window.scrollTo({top:0,behavior:"smooth"})}
-document.getElementById("next").onclick=function(){var e=val();if(e){document.getElementById("err").textContent=e;return}step++;show()};
+document.getElementById("next").onclick=function(){var e=val();if(e){document.getElementById("err").textContent=e;return}if(step===3)send();step++;show()};
 document.getElementById("back").onclick=function(){if(step>1){step--;show()}};
 show();
 </script>
